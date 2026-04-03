@@ -1492,7 +1492,6 @@ body.anti-sleep-active {
     })();
 </script>  
 <script>
-// Load config from GitHub
 async function loadExamConfig() {
     const className = window.location.pathname.split('/')[1] || '1D';
     const url = `https://raw.githubusercontent.com/lfjccbt/${className}/main/config.json?t=${Date.now()}`;
@@ -1509,7 +1508,7 @@ async function loadExamConfig() {
             MARK_PER_CORRECT = config.correctMark;
             MARK_PER_WRONG = config.wrongMark;
             
-            // Update marks display on screen (THIS UPDATES CHANGE #1)
+            // Update marks display on screen
             const correctDisplay = document.getElementById('correctMarkDisplay');
             const wrongDisplay = document.getElementById('wrongMarkDisplay');
             if (correctDisplay) correctDisplay.textContent = `CORRECT ANSWER + ${config.correctMark} MARKS`;
@@ -1524,12 +1523,31 @@ async function loadExamConfig() {
                 s.numericalStart = s.end - (s.numerical || 0) + 1;
                 start = s.end + 1;
             });
-            TOTAL_QUESTIONS = start - 1;
-            document.getElementById('totalQuestionsDisplay').innerHTML = `<strong>TOTAL ${TOTAL_QUESTIONS} QUESTIONS</strong>`;
-            // Update total questions display
-            const totalDisplay = document.getElementById('totalQuestionsDisplay');
-            if (totalDisplay) totalDisplay.innerHTML = `<strong>TOTAL ${window.TOTAL_QUESTIONS} QUESTIONS</strong>`;
+                       TOTAL_QUESTIONS = start - 1;
+            // ✅ FIX: Update the total questions display on the first page
+            const totalDisplayElement = document.getElementById('totalQuestionsDisplay');
+            if (totalDisplayElement) {
+                totalDisplayElement.innerHTML = `<strong>TOTAL ${TOTAL_QUESTIONS} QUESTIONS</strong>`;
+            }
+            // Update subject breakdown
+            let breakdownHTML = '';
+            EXAM_SETUP.subjects.forEach(s => {
+                if (s.numerical > 0) {
+                    breakdownHTML += `<p style="margin: 5px 0;"><strong>• ${s.name}: ${s.mcq} (MCQ), ${s.numerical} (Numerical Input)</strong></p>`;
+                } else {
+                    breakdownHTML += `<p style="margin: 5px 0;"><strong>• ${s.name}: ${s.questions} (MCQ)</strong></p>`;
+                }
+            });
+            const breakdownDiv = document.getElementById('subjectBreakdownDisplay');
+            if (breakdownDiv) breakdownDiv.innerHTML = breakdownHTML;
             
+            console.log('✅ Config loaded');
+            console.log(`✅ Total Questions: ${TOTAL_QUESTIONS}`);
+        }
+    } catch(e) {
+        console.log('Failed to load config');
+    }
+}
             // Update subject breakdown
             let breakdownHTML = '';
             EXAM_SETUP.subjects.forEach(s => {
@@ -1584,7 +1602,7 @@ loadExamConfig();
 
 <div id="accessDenied" class="access-denied">
     <h1>LFJC ONLINE EXAMINATION</h1>
-    <p style="font-size: 1.2em; margin: 10px 0;" id="totalQuestionsDisplay">Loading...</p>
+    <p style="font-size: 1.2em; margin: 10px 0;" id="totalQuestionsDisplay"><strong>Loading questions...</strong></p>
     <div id="subjectBreakdownDisplay"></div>
   <p style="margin: 10px 0; font-weight: bold;" id="correctMarkDisplay">CORRECT ANSWER + 1 MARKS</p>  
   <p style="margin: 5px 0; font-weight: bold;" id="wrongMarkDisplay">WRONG ANSWER 0 MARK</p>
