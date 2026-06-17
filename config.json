@@ -3,12 +3,18 @@
   "correctMark": 1,
   "wrongMark": 0,
   "activeForForms": [
+    "MATHS_A",
     "PHYSICS"
   ],
   "subjects": [
     {
+      "name": "MATHS_A",
+      "questions": 30,
+      "numerical": 0
+    },
+    {
       "name": "PHYSICS",
-      "questions": 25,
+      "questions": 30,
       "numerical": 0
     }
   ]
